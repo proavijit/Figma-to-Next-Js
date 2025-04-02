@@ -1,20 +1,33 @@
-"use client"
+"use client";
 import { useState, useRef, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import { useSwipeable } from "react-swipeable";
+import Image from "next/image";
+
+const Roadside = "/services/bg1.png";
+const Banking = "/services/bg2.png";
+const Insurance = "/services/bg3.png";
+const Travel = "/services/bg4.png";
 
 const services = [
-  { title: "TRAVEL", description: "Explore the world with our travel services." },
-  { title: "FITNESS", description: "Stay healthy and fit with our guidance." },
-  { title: "EDUCATION", description: "Enhance your knowledge with our courses." },
-  { title: "FOOD", description: "Delicious recipes and meal plans for you." },
-  { title: "TECH", description: "Stay updated with the latest technology trends." },
-  { title: "FASHION", description: "Discover the latest fashion trends." },
+  { title: "Roadside", description: "Explore the world with our travel services.", background: Roadside },
+  { title: "Banking", description: "Stay healthy and fit with our guidance.", background: Banking },
+  { title: "Insurance", description: "Enhance your knowledge with our courses.", background: Insurance },
+  { title: "Travel", description: "Delicious recipes and meal plans for you.", background: Travel },
+  { title: "TECH", description: "Stay updated with the latest technology trends.", background: Travel },
+  { title: "TECH", description: "Stay updated with the latest technology trends.", background: Travel },
+  { title: "TECH", description: "Stay updated with the latest technology trends.", background: Travel },
+  { title: "TECH", description: "Stay updated with the latest technology trends.", background: Travel },
+  { title: "TECH", description: "Stay updated with the latest technology trends.", background: Travel },
+  { title: "TECH", description: "Stay updated with the latest technology trends.", background: Travel },
+  { title: "TECH", description: "Stay updated with the latest technology trends.", background: Travel },
+  { title: "FASHION", description: "Discover the latest fashion trends.", background: Banking },
 ];
 
 export default function ServiceCardCarousel() {
   const [selectedService, setSelectedService] = useState(null);
   const carouselRef = useRef(null);
+  const isDragging = useRef(false);
 
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => scrollCarousel(1),
@@ -41,15 +54,30 @@ export default function ServiceCardCarousel() {
       <div
         ref={carouselRef}
         className="flex gap-4 cursor-grab active:cursor-grabbing select-none overflow-x-auto"
-        style={{ scrollBehavior: "smooth", whiteSpace: "nowrap", scrollbarWidth: "none", msOverflowStyle: "none" }}
+        style={{
+          scrollBehavior: "smooth",
+          whiteSpace: "nowrap",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none"
+        }}
+        onMouseDown={() => (isDragging.current = true)}
+        onMouseUp={() => (isDragging.current = false)}
       >
         {services.map((service, index) => (
           <div
             key={index}
-            className="relative w-[255px] h-[355px] bg-red-200 rounded-tr-[8px] rounded-bl-[8px] cursor-pointer flex-shrink-0"
-            onClick={() => setSelectedService(service)}
+            className="relative w-[255px] h-[355px] rounded-tr-[8px] rounded-bl-[8px] cursor-pointer flex-shrink-0 overflow-hidden"
+            onClick={() => !isDragging.current && setSelectedService(service)}
           >
-            <div className="absolute bottom-0 left-0 w-[160px] h-[60px] bg-black text-white flex items-center justify-center rounded-tr-[8px] rounded-bl-[8px]">
+            <Image
+              src={service.background}
+              alt={service.title}
+              fill
+              style={{ objectFit: "cover" }}
+              className="absolute inset-0 pointer-events-none user-select-none"
+            />
+
+            <div className="absolute bottom-0 left-0 w-[160px] h-[60px] bg-[#333333] text-white flex items-center justify-center rounded-tr-[8px] rounded-bl-[8px] hover:text-[#B83B5E]">
               {service.title}
             </div>
           </div>
@@ -58,7 +86,11 @@ export default function ServiceCardCarousel() {
 
       {/* Popup Modal */}
       {selectedService && (
-        <Dialog open={true} onClose={() => setSelectedService(null)} className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <Dialog
+          open={true}
+          onClose={() => setSelectedService(null)}
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+        >
           <div className="bg-green-500 p-6 rounded-lg max-w-sm text-center">
             <h2 className="text-xl font-bold mb-2">{selectedService.title}</h2>
             <p className="mb-4">{selectedService.description}</p>
